@@ -809,6 +809,7 @@ async function cntAlarmTgkOci1() {
     }
 
     const results = [];
+    const processedCounters = new Set();
     for (const row of rowsToProcess) {
       const counter = await OPCUA.readValue(ngTgkConfig[`cnt_row${row}`].node);
 
@@ -817,10 +818,16 @@ async function cntAlarmTgkOci1() {
         continue;
       }
 
+      // Cegah duplikasi counter di dalam satu batch
+      if (processedCounters.has(counter)) {
+        continue;
+      }
+
       // Jika monitor value tidak ditemukan, pastikan tidak mengambil data lama yang sudah tersimpan
       if (foundRow === -1 && topCounter >= monitorValueCntTgkOci1 && counter <= monitorValueCntTgkOci1) {
         continue;
       }
+      processedCounters.add(counter);
 
       const firstCode = await OPCUA.readValue(ngTgkConfig[`kode1_row${row}`].node);
       const secondCode = await OPCUA.readValue(ngTgkConfig[`kode2_row${row}`].node);
@@ -999,6 +1006,7 @@ async function cntAlarmTgkOci2() {
     }
 
     const results = [];
+    const processedCounters = new Set();
     for (const row of rowsToProcess) {
       const counter = await OPCUA.readValue(ngTgkConfig[`cnt_row${row}`].node);
 
@@ -1007,10 +1015,16 @@ async function cntAlarmTgkOci2() {
         continue;
       }
 
+      // Cegah duplikasi counter di dalam satu batch
+      if (processedCounters.has(counter)) {
+        continue;
+      }
+
       // Jika monitor value tidak ditemukan, pastikan tidak mengambil data lama yang sudah tersimpan
       if (foundRow === -1 && topCounter >= monitorValueCntTgkOci2 && counter <= monitorValueCntTgkOci2) {
         continue;
       }
+      processedCounters.add(counter);
 
       const firstCode = await OPCUA.readValue(ngTgkConfig[`kode1_row${row}`].node);
       const secondCode = await OPCUA.readValue(ngTgkConfig[`kode2_row${row}`].node);
